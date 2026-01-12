@@ -35,57 +35,87 @@ For details study the documentation in remoteio/remoteio_doku and the examples i
 ## Server (remote Raspberry Pi)
 Use this all-in-one command to install remoteio as deamon on port `8509`.
 The server can be updated with this command.
-```
+```bash
 bash -c "$(wget -qLO - https://github.com/schech1/remoteio/raw/master/install.sh)"
-
 ```
 
-##  Using pip
+## Using uv
+
+### Server configuration
+```bash
+uv init remoteio_server
+cd remoteio_server
+uv add git+ssh://git@github.com:abreumateus/remoteio.git
+uv add lpgio
+uv add RPi.GPIO
+uv add smbus
+uv add smbus2
+uv add spidev
+uv add pigpio
 ```
-pip install remoteio
-```
+
 When you want to create the server by yourself, you can install the library via
-pip and use the examples below, for server- and client usage.
+pip or uv and use the examples below, for server- and client usage.
 
 
-
-## Server usage
+### Server usage
 Start a remote server on port `1234`.
 If no port is specified default port `8509` will be used
 
-```
+```python
 from remoteio import run_server
 
 if __name__ == "__main__":
+   # Start remote server
     run_server(port=1234)
-
 ```
 
+### Client configuration
+```bash
+uv init remoteio_client
+cd remoteio_client
+uv add git+ssh://git@github.com:abreumateus/remoteio.git
+uv add smbus
+uv add smbus2
+uv add spidev
+```
 
 ## Client usage
-```
+```python
+import logging
+
+from remoteio.remoteio_devices.remote_led import Remote_LED
+
 from remoteio import RemoteServer
 
+logger = logging.getLogger(__name__)
+
+
 if __name__ == "__main__":
-    server_ip = "192.168.1.38"
-    server_port = 1234
+   try:
+      # Logging configuration and setup
+      logging.basicConfig(level=logging.INFO, style="{", format="{asctime}[{levelname:8}]{message}")
+      logger = logging.getLogger(name="remoteio")
+      logger.setLevel(logging.INFO)
 
-    remote_server = RemoteServer(server_ip, server_port)
-    remote_pin = Remote_LED(remote_server,pinNr)
-    remote_pin.on(on_time=2.0) # (Optional) Time until switch off in sec
-    remote_pin.blink() # Blink LED
-    remote_pin.pulse() # Pulse LED
-    remote_pin.off()
-    remote_server.close()
-# A complete set of examples is in controller.py
-```
+      # Remote server configuration and setup
+      server_ip = "pi5mateus"
+      server_port = 1234
+      rs = RemoteServer(server_ip, server_port)
 
-### Use Board numbering
-```
-pinNr = map_bg(7, 'b') # physical board number is translated to GPIO4
-```
-### Use GPIO numbering
-```
-pinNr = 4 # GPIO numbering (e.g. GPIO4) is default
-```
+      # Remote LED configuration and setup
+      led = Remote_LED(rs, pin=17, initial_value=False)
 
+      # Gpiozero functions and properties
+      print(f"{led.class_name} get functions: {led.functions}")
+      print(f"{led.class_name} get properties: {led.readOnlyProperties}")
+      print(f"{led.class_name} get and set properties: {led.writeableProperties}")
+      
+      # Remote LED blink
+      led.blink()
+
+      # Remote server close
+      rs.close()
+   except Exception as e:
+      logger.error(f"{e.__class__}: {str(e)}")
+```
