@@ -45,7 +45,7 @@ bash -c "$(wget -qLO - https://github.com/schech1/remoteio/raw/master/install.sh
 ```bash
 uv init remoteio_server
 cd remoteio_server
-uv add git+ssh://git@github.com:abreumateus/remoteio.git
+uv add git+ssh://git@github.com/abreumateus/remoteio.git
 uv add lpgio
 uv add RPi.GPIO
 uv add smbus
@@ -74,10 +74,13 @@ if __name__ == "__main__":
 ```bash
 uv init remoteio_client
 cd remoteio_client
-uv add git+ssh://git@github.com:abreumateus/remoteio.git
+uv add git+ssh://git@github.com/abreumateus/remoteio.git
+uv add lpgio
+uv add RPi.GPIO
 uv add smbus
 uv add smbus2
 uv add spidev
+uv add pigpio
 ```
 
 ## Client usage
