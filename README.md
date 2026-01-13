@@ -75,7 +75,6 @@ uv init remoteio_client
 cd remoteio_client
 uv add git+https://github.com/abreumateus/remoteio.git
 uv add lgpio
-uv add RPi.GPIO
 uv add smbus
 uv add smbus2
 uv add spidev
